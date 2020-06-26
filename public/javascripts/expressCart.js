@@ -1,4 +1,4 @@
-/* eslint-disable prefer-arrow-callback, no-var, no-tabs */
+/* eslint-disable prefer-arrow-callback, no-var, no-tabs, prefer-template */
 /* globals showNotification, numeral, feather */
 $(document).ready(function (){
     if($(window).width() < 768){
@@ -368,6 +368,25 @@ $(document).ready(function (){
         var variantPrice = $(this).find(':selected').attr('data-price');
         var currencySymbol = $('#currencySymbol').val();
         $('h4.product-price:first').html(currencySymbol + variantPrice);
+    });
+
+    $(document).on('click', '.add-variant-to-cart', function(e){
+        $.ajax({
+            method: 'POST',
+            url: '/product/addtocart',
+            data: {
+                productId: $(this).attr('data-id'),
+                productQuantity: '1',
+                productVariant: $('#productVariant-' + $(this).attr('data-id')).val()
+            }
+        })
+		.done(function(msg){
+            updateCartDiv();
+            showNotification(msg.message, 'success');
+        })
+        .fail(function(msg){
+            showNotification(msg.responseJSON.message, 'danger');
+        });
     });
 
     $(document).on('click', '.product-add-to-cart', function(e){
